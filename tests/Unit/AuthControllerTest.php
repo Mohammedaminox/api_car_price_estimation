@@ -8,13 +8,13 @@ class AuthControllerTest extends TestCase
     /**
      * A basic unit test example.
      */
-    public function testLoginWithInvalidData(){
+    public function testLoginWithIvalidData(){
         $response = $this->postJson('/api/login', [
             'email' => 'invalid@example.com',
             'password' => 'invalidpassword',
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJson(['valid' => 'valid data']);
+        $response->assertStatus(401);
+        $response->assertJson(['invalid' => 'invalid data']);
     }
 }
