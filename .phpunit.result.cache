@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Tests\\Unit\\AuthControllerTest::testLoginWithIvalidData":7},"times":{"Tests\\Unit\\AuthControllerTest::testLoginWithIvalidData":0.362,"Tests\\Unit\\ExampleTest::test_that_true_is_true":0,"Tests\\Unit\\UserControllerTest::test_example":0,"Tests\\Unit\\Controllers\\AuthControllerTest::testLoginWithInvalidCredentials":0.288}}

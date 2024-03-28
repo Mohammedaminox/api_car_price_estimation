@@ -2,29 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-    
-        if (Auth::attempt($credentials)) {
-            $user = $request->user();
-    
-            if ($user->hasRole('admin')) {
-                // For admin role
-                $token = $user->createToken('AdminToken')->plainTextToken;
-            } else {
-                // For user role
-                $token = $user->createToken('UserToken')->plainTextToken;
-            }
-    
-            return response()->json(['token' => $token], 200);
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->errors()->toArray());
         }
-    
-        return response()->json(['message' => 'Unauthorized'], 401);
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+              /** @var \App\Models\User $user **/
+            if (!$user->hasRole('admin')) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $token = $user->createToken('Personal Access Token')->accessToken;
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+            ], 200);
+        }
+
+        return response()->json(['error' => 'Invalid credentials'], 401);
     }
 }
