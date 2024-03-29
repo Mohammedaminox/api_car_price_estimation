@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -27,11 +27,13 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
               /** @var \App\Models\User $user **/
-            if (!$user->hasRole('admin')) {
-                return response()->json(['error' => 'Unauthorized'], 401);
+              if ($user->hasRole('admin')) {
+                // For admin role
+                $token = $user->createToken('AdminToken')->accessToken;
+            } else {
+                // For user role
+                $token = $user->createToken('UserToken')->accessToken;
             }
-
-            $token = $user->createToken('Personal Access Token')->accessToken;
 
             return response()->json([
                 'user' => $user,
